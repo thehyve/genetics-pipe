@@ -87,7 +87,7 @@ class Commands(val ss: SparkSession,
     val vIdx = VariantIndex.builder(c).load
     val v2d = V2DIndex.build(vIdx, c)
 
-    v2d.table.write.json(c.output.stripSuffix("/").concat("/v2d/"))
+    v2d.table.write.parquet(c.output.stripSuffix("/").concat("/v2d/"))
   }
 
   def diseaseToVariantToGene(): Unit = {
@@ -104,7 +104,7 @@ class Commands(val ss: SparkSession,
         (col("ref_allele") === col("tag_ref")) and
         (col("alt_allele") === col("tag_alt")))
       .drop(VariantIndex.columns: _*)
-      .write.json(c.output.stripSuffix("/").concat("/d2v2g/"))
+      .write.parquet(c.output.stripSuffix("/").concat("/d2v2g/"))
   }
 
   def dictionaries(): Unit = {

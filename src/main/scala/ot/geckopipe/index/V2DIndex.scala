@@ -142,7 +142,7 @@ object V2DIndex extends LazyLogging  {
 
     logger.info("load variant to gene dataset from built one")
     val v2d = ss.read
-      .json(conf.variantDisease.path)
+      .parquet(conf.variantDisease.path)
 
     V2DIndex(v2d)
   }
