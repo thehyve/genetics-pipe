@@ -121,7 +121,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
     import ss.implicits._
     val v2d = ss.read
       .schema(Encoders.product[V2D].schema)
-      .json(configuration.variantDisease.path)
+      .parquet(configuration.variantDisease.path)
       .as[V2D]
       .head()
 
@@ -177,7 +177,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
     import ss.implicits._
     val d2v2gs = ss.read
       .schema(Encoders.product[D2V2G].schema)
-      .json(configuration.output + "/d2v2g/")
+      .parquet(configuration.output + "/d2v2g/")
       .as[D2V2G]
       .collect()
 
@@ -593,7 +593,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
   private def createV2DJson(path: String)(implicit ss: SparkSession): Unit = {
     import ss.implicits._
 
-    Seq(v2d).toDF().write.json(path)
+    Seq(v2d).toDF().write.parquet(path)
   }
 
   private val v2dColoc = V2DColoc(
