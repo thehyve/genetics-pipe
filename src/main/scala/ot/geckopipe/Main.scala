@@ -225,8 +225,9 @@ object Main extends LazyLogging {
     // if some uri then setmaster must be set otherwise
     // it tries to get from env if any yarn running
     val conf = sparkUri match {
-      case Some(uri) if uri.nonEmpty => sparkConf.setMaster(uri)
-      case _                         => sparkConf
+      case Some(uri) if uri == "local" => sparkConf.set("spark.master", "local")
+      case Some(uri) if uri.nonEmpty   => sparkConf.setMaster(uri)
+      case _                           => sparkConf
     }
 
     SparkSession.builder
