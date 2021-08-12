@@ -120,8 +120,13 @@ object V2DIndex extends LazyLogging {
       .orderBy(efoColumns.head)
 
     val pattern = """^([a-zA-Z]+)(.*)"""
-    val studies = ss.read
+    var studies = ss.read
       .parquet(path)
+    
+    if (!studies.columns.contains("source"))
+      studies = studies.withColumn("source", lit(""))
+
+    studies = studies
       .withColumn("pmid", when(length($"pmid") > 0, $"pmid"))
       .withColumn("pub_date", when(length($"pub_date") > 0, $"pub_date"))
       .withColumn("pub_journal", when(length($"pub_journal") > 0, $"pub_journal"))
@@ -134,7 +139,8 @@ object V2DIndex extends LazyLogging {
       .withColumn("ancestry_initial",
                   filter(coalesce(col("ancestry_initial"), typedLit(Array.empty[String])),
                          c => length(c) > 0))
-      .withColumn("source", regexp_extract(col("study_id"), pattern, 1))
+      .withColumn("source", when(length($"source") > 0, $"source")
+                            .otherwise(regexp_extract(col("study_id"), pattern, 1)))
       .drop(efoColumns.tail: _*)
       .join(efoDF, Seq(efoColumns.head), "left_outer")
       .withColumn("trait_efos", coalesce(col("trait_efos"), typedLit(Array.empty[String])))
