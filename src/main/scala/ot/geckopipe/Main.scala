@@ -112,7 +112,11 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
       .format(c.format)
       .save(c.scoredDatasets.variantGeneScored)
 
-    d2v2gScored.write
+    d2v2gScored
+      .withColumn("_study_id", col("study_id"))
+      .repartition(1)
+      .write
+      .partitionBy("_study_id")
       .format(c.format)
       .save(c.scoredDatasets.diseaseVariantGeneScored)
 
@@ -128,7 +132,13 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
     val vIdx = VariantIndex.builder(c).load
     val v2d = V2DIndex.build(vIdx, c)
 
-    v2d.table.write.format(c.format).save(c.variantDisease.path)
+    v2d.table
+      .withColumn("_study_id", col("study_id"))
+      .repartition(1)
+      .write
+      .partitionBy("_study_id")
+      .format(c.format)
+      .save(c.variantDisease.path)
   }
 
   def diseaseToVariantToGene(): Unit = {
@@ -148,7 +158,10 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
           (col("alt_allele") === col("tag_alt"))
       )
       .drop(VariantIndex.columns: _*)
+      .withColumn("_study_id", col("study_id"))
+      .repartition(1)
       .write
+      .partitionBy("_study_id")
       .format(c.format)
       .save(c.diseaseVariantGene.path)
   }
