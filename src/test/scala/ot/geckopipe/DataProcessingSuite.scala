@@ -178,7 +178,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
     import ss.implicits._
     val d2v2gs = ss.read
       .schema(Encoders.product[D2V2G].schema)
-      .json(configuration.diseaseVariantGene.path)
+      .parquet(configuration.diseaseVariantGene.path)
       .as[D2V2G]
       .collect()
 
