@@ -103,12 +103,6 @@ class Commands(val c: Configuration)(implicit val ss: SparkSession) extends Lazy
     val d2v2gScored = d2v2g
       .join(v2gScoresRenamed, cols.map(_._2))
 
-    val v2gScored = v2g.table.join(v2gScores, cols.map(_._1))
-    v2gScored.write
-      .format(c.format)
-      .options(writeOptions)
-      .save(c.scoredDatasets.variantGeneScored)
-
     d2v2gScored.write
       .format(c.format)
       .options(writeOptions)
