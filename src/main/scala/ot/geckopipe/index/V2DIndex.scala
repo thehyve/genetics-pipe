@@ -26,7 +26,7 @@ object V2DIndex extends LazyLogging {
         StructField("n_initial", LongType) ::
         StructField("n_replication", LongType) ::
         StructField("n_cases", LongType) ::
-        StructField("trait_category", DoubleType) ::
+        StructField("trait_category", StringType) ::
         StructField("num_assoc_loci", LongType) ::
         StructField("lead_chrom", StringType) ::
         StructField("lead_pos", LongType) ::
