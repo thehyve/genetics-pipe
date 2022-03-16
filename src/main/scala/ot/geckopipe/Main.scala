@@ -107,10 +107,6 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
     val d2v2gScored = d2v2g
       .join(v2gScoresRenamed, cols.map(_._2))
 
-    val v2gScored = v2g.table.join(v2gScores, cols.map(_._1))
-    v2gScored.write
-      .format(c.format)
-      .save(c.scoredDatasets.variantGeneScored)
 
     d2v2gScored
       .withColumn("_study_id", col("study_id"))
