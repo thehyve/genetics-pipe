@@ -45,6 +45,7 @@ case class ManhattanSection(locusGene: String,
 
 case class Configuration(output: String,
                          format: String,
+                         compression: Option[String],
                          sampleFactor: Double,
                          sparkUri: Option[String],
                          logLevel: String,

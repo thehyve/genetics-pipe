@@ -269,6 +269,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
       output = outputFolder,
       sampleFactor = 0, //disabled,
       format = "json",
+      compression = null,
       sparkUri = Some("local[*]"),
       logLevel = "INFO",
       ensembl = EnsemblSection(lut = s"$inputFolder/hg38.json"),

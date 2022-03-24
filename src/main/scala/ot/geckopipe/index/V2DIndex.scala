@@ -207,6 +207,8 @@ object V2DIndex extends LazyLogging {
   def load(conf: Configuration)(implicit ss: SparkSession): V2DIndex = {
 
     logger.info("load variant to gene dataset from built one")
+    logger.info(s"format to load v2d data from: ${conf.format}")
+    // unable to read directory of .json.gz files
     val v2d = ss.read
       .schema(schema)
       .format(conf.format)

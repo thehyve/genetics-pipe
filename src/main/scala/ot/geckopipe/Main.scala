@@ -112,6 +112,9 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
       .format(c.format)
       .save(c.scoredDatasets.variantGeneScored)
 
+    // val compression = c.compression.getOrElse("none")
+    // logger.info(s"compression: ${compression}")
+
     d2v2gScored
       .withColumn("_study_id", col("study_id"))
       .repartition(1)
@@ -132,11 +135,16 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
     val vIdx = VariantIndex.builder(c).load
     val v2d = V2DIndex.build(vIdx, c)
 
+    // val compression = c.compression.getOrElse("none")
+    // logger.info(s"compression: ${compression}")
+
     v2d.table
       .withColumn("_study_id", col("study_id"))
       .repartition(1)
       .write
       .partitionBy("_study_id")
+      // .option("compression", compression)
+      // .format("parquet")
       .format(c.format)
       .save(c.variantDisease.path)
   }
@@ -146,6 +154,9 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
 
     val v2g = V2GIndex.load(c)
     val v2d = V2DIndex.load(c)
+
+    // val compression = c.compression.getOrElse("none")
+    // logger.info(s"compression: ${compression}")
 
     // v2d also contains rows with both null and we dont want those to be included
     val _ = v2d.table
@@ -162,6 +173,9 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
       .repartition(1)
       .write
       .partitionBy("_study_id")
+      // .option("compression", "gzip")
+      // .format("json")
+      // .format(c.format)
       .format(c.format)
       .save(c.diseaseVariantGene.path)
   }
@@ -284,6 +298,7 @@ object Main extends LazyLogging {
       .set("spark.driver.maxResultSize", "0")
       .set("spark.debug.maxToStringFields", "2000")
       .set("spark.sql.autoBroadcastJoinThreshold", "-1")
+      // .set("spark.sql.parquet.enableVectorizedReader","false")
 
     // if some uri then setmaster must be set otherwise
     // it tries to get from env if any yarn running
