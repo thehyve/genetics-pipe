@@ -94,7 +94,11 @@ object Manhattan {
   def makeD2V(cols: List[String])(df: DataFrame): DataFrame = {
     val tagVariantCols = List("tag_chrom", "tag_pos", "tag_ref", "tag_alt").map(col)
     val randomC = Random.alphanumeric.take(6).mkString
-    df.withColumnRenamed("study_id", "study")
+    val expectedColumns = Set("beta", "beta_ci_lower", "beta_ci_upper", "odds_ratio", "oddsr_ci_lower", "oddsr_ci_upper")
+    val actualColumns = df.columns
+    val missingColumns = (expectedColumns -- actualColumns.toSet).map(lit(null).as(_))
+    df.select(actualColumns.map(col) ++ missingColumns: _*)
+      .withColumnRenamed("study_id", "study")
       .withColumnRenamed("lead_chrom", "chrom")
       .withColumnRenamed("lead_pos", "pos")
       .withColumnRenamed("lead_ref", "ref")
@@ -131,12 +135,12 @@ object Manhattan {
       .transform(makeL2G(cols))
 
     val d2v2g = sparkSession.read
-      .format(configuration.format)
+      .format("parquet")
       .load(conf.diseaseVariantGeneScored)
       .transform(makeD2V2G(cols))
 
     val coloc = sparkSession.read
-      .format(configuration.format)
+      .format("parquet")
       .load(conf.variantDiseaseColoc)
       .transform(makeD2VColoc(cols))
 

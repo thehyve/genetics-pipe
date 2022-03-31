@@ -119,7 +119,13 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
   }
 
   def manhattan(): Unit = {
-    Manhattan(c).write.format(c.format).save(c.manhattan.path)
+    Manhattan(c)
+      .withColumn("_study", col("study"))
+      .repartition(1)
+      .write
+      .partitionBy("_study")
+      .format("parquet")
+      .save(c.manhattan.path)
   }
 
   def variantToDisease(): Unit = {
