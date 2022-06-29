@@ -103,7 +103,8 @@ object V2DIndex extends LazyLogging {
                 (col("alt_allele") === col("tag_alt")))),
           "inner"
         )
-        .drop("chr_id", "position", "ref_allele", "alt_allele"))
+        .drop("chr_id", "position", "ref_allele", "alt_allele")
+        .withColumn("tag_pos", col("tag_pos").cast(LongType)))
   }
 
   def buildStudiesIndex(path: String, efos: String)(implicit ss: SparkSession): DataFrame = {
