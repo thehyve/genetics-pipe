@@ -108,6 +108,12 @@ object V2DIndex extends LazyLogging {
           "inner"
         )
         .drop("chr_id", "position", "ref_allele", "alt_allele")
+        .withColumn("tag_pos", col("tag_pos").cast(LongType))
+        .withColumn("lead_pos", col("lead_pos").cast(LongType))
+        .withColumn("num_assoc_loci", col("num_assoc_loci").cast(LongType))
+        .withColumn("n_initial", col("n_initial").cast(LongType))
+        .withColumn("n_cases", col("n_cases").cast(LongType))
+        .withColumn("n_replication", col("n_replication").cast(LongType))
     )
   }
 
