@@ -20,15 +20,6 @@ RUN sbt assembly
 
 FROM openjdk:11-jdk-stretch
 
-# Create non-root user
-ARG UID
-ARG GID
-RUN groupadd -g $GID -o otg
-RUN useradd -m -u $UID -g $GID -o -s /bin/bash otg
-
-# switch to otg user
-USER otg
-
 # copy assembled workflow
 COPY --from=build_section /pipe/target/scala-*/ot-geckopipe-assembly-*.jar /ot-geckopipe.jar
 
