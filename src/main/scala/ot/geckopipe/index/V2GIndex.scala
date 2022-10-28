@@ -146,7 +146,7 @@ object V2GIndex extends LazyLogging {
     logger.info("load variant to gene dataset from built one")
     val v2g = ss.read
       .schema(schema)
-      .format("json")
+      .format("parquet")
       .load(conf.variantGene.path)
 
     new V2GIndex(v2g)

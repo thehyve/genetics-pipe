@@ -73,7 +73,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
     import ss.implicits._
     val v2gs = ss.read
       .schema(Encoders.product[V2G].schema)
-      .json(configuration.variantGene.path)
+      .parquet(configuration.variantGene.path)
       .as[V2G]
       .collect()
 
@@ -170,7 +170,7 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
 
   testWithSpark("calculate disease to variant to gene") { ss =>
     val configuration = createTestConfiguration()
-    createV2GJson(configuration.variantGene.path)(ss)
+    createV2GParquet(configuration.variantGene.path)(ss)
     createV2DJson(configuration.variantDisease.path)(ss)
 
     Main.run(CommandLineArgs(command = Some("disease-variant-gene")), configuration)(ss)
@@ -589,10 +589,10 @@ object DataProcessingSuite extends LocalSparkSessionSuite("spark-tests") {
     distance_score_q = Some(0.1)
   )
 
-  private def createV2GJson(path: String)(implicit ss: SparkSession): Unit = {
+  private def createV2GParquet(path: String)(implicit ss: SparkSession): Unit = {
     import ss.implicits._
 
-    Seq(v2g).toDF().write.json(path)
+    Seq(v2g).toDF().write.parquet(path)
   }
 
   private val v2d = V2D(
