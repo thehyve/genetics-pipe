@@ -76,15 +76,16 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
     val vIdx = VariantIndex.builder(c).load
     vIdx.table.cache()
 
-    val vepDts = VEP(c)
+    //val vepDts = VEP(c)
 
-    val nearestDts = Distance(vIdx, c)
+    //val nearestDts = Distance(vIdx, c)
 
     val positionalDts = QTL(vIdx, c)
 
-    val intervalDt = Interval(vIdx, c)
+    //val intervalDt = Interval(vIdx, c)
 
-    val dtSeq = Seq(vepDts, nearestDts, positionalDts, intervalDt)
+    //val dtSeq = Seq(vepDts, nearestDts, positionalDts, intervalDt)
+    val dtSeq = Seq(positionalDts)
     val v2g = V2GIndex.build(dtSeq, c)
 
     v2g.table.write.format("parquet").save(c.variantGene.path)
@@ -100,6 +101,7 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
                     "alt_allele" -> "tag_alt",
                     "gene_id" -> "gene_id")
     val v2g = V2GIndex.load(c)
+    // inject qtl here
     val d2v2g = ss.read.format(c.format).load(c.diseaseVariantGene.path)
     val v2gScores = v2g.computeScores(c).orderBy(cols.take(2).map(x => col(x._1)): _*).persist()
     val v2gScoresRenamed = cols.foldLeft(v2gScores)((B, a) => B.withColumnRenamed(a._1, a._2))
