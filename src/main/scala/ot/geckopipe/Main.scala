@@ -101,7 +101,6 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
                     "alt_allele" -> "tag_alt",
                     "gene_id" -> "gene_id")
     val v2g = V2GIndex.load(c)
-    // inject qtl here
     val d2v2g = ss.read.format(c.format).load(c.diseaseVariantGene.path)
     val v2gScores = v2g.computeScores(c).orderBy(cols.take(2).map(x => col(x._1)): _*).persist()
     val v2gScoresRenamed = cols.foldLeft(v2gScores)((B, a) => B.withColumnRenamed(a._1, a._2))
