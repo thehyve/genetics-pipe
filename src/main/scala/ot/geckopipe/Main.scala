@@ -76,15 +76,16 @@ class Commands(val ss: SparkSession, val sampleFactor: Double, val c: Configurat
     val vIdx = VariantIndex.builder(c).load
     vIdx.table.cache()
 
-    val vepDts = VEP(c)
+    //val vepDts = VEP(c)
 
-    val nearestDts = Distance(vIdx, c)
+    //val nearestDts = Distance(vIdx, c)
 
     val positionalDts = QTL(vIdx, c)
 
-    val intervalDt = Interval(vIdx, c)
+    //val intervalDt = Interval(vIdx, c)
 
-    val dtSeq = Seq(vepDts, nearestDts, positionalDts, intervalDt)
+    //val dtSeq = Seq(vepDts, nearestDts, positionalDts, intervalDt)
+    val dtSeq = Seq(positionalDts)
     val v2g = V2GIndex.build(dtSeq, c)
 
     v2g.table.write.format("parquet").save(c.variantGene.path)

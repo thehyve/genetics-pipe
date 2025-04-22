@@ -133,8 +133,15 @@ object V2GIndex extends LazyLogging {
           .foldLeft(el.table)((agg, el) => agg.withColumn(el, lit(null))))
 
     val allDts = concatDatasets(processedDts, (columns ++ allFeatures).distinct)
-      .withColumn("fpred_labels", coalesce(col("fpred_labels"), typedLit(Array.empty[String])))
-      .withColumn("fpred_scores", coalesce(col("fpred_scores"), typedLit(Array.empty[Double])))
+      .withColumn("fpred_labels", typedLit(Array.empty[String]))
+      .withColumn("fpred_scores", typedLit(Array.empty[Double]))
+      .withColumn("fpred_max_label", lit(null).cast(StringType))
+      .withColumn("fpred_max_score", lit(null).cast(DoubleType))
+      .withColumn("interval_score", lit(null).cast(DoubleType))
+      .withColumn("interval_score_q", lit(null).cast(DoubleType))
+      .withColumn("d", lit(null).cast(LongType))
+      .withColumn("distance_score", lit(null).cast(DoubleType))
+      .withColumn("distance_score_q", lit(null).cast(DoubleType))
       .join(geneIDs, Seq(GeneIndex.idColumn), "left_semi")
       .select(schema.fieldNames.head, schema.fieldNames.tail: _*)
 
